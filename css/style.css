@@ -1,0 +1,182 @@
+.green-record {
+    color: green;
+}
+
+.red-record {
+    color: red;
+}
+
+/* Main info table */
+.spinner {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    color: #83e2c2;
+    background: radial-gradient(farthest-side, currentColor calc(100% - 6.7px), #0000 calc(100% - 5.6px) 0);
+    -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 14.6px), #000 calc(100% - 13.4px));
+    border-radius: 50%;
+    animation: spinner-sm4bhi 2.8s infinite linear;
+    margin: 50px auto;
+}
+
+.spinner::before,
+.spinner::after {
+    content: "";
+    grid-area: 1/1;
+    background: linear-gradient(currentColor 0 0) center,
+    linear-gradient(currentColor 0 0) center;
+    background-size: 100% 11.2px, 11.2px 100%;
+    background-repeat: no-repeat;
+}
+
+.spinner::after {
+    transform: rotate(45deg);
+}
+
+@keyframes spinner-sm4bhi {
+    100% {
+        transform: rotate(1turn);
+    }
+}
+
+div.length-control {
+    float: right;
+    padding-right: 6px;
+}
+
+#mainRegisterTable_wrapper {
+    margin-bottom: 40px;
+}
+
+table#mainRegisterTable {
+    margin: auto;
+    padding: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+table#mainRegisterTable tr:nth-child(odd) {
+    background-color: #f2f2f3;
+}
+
+table#mainRegisterTable tr:nth-child(2n) {
+    background-color: #dbe5e9;
+}
+
+table#mainRegisterTable.dataTable thead tr {
+    background-color: #83e2c2;
+}
+
+table#mainRegisterTable.dataTable thead tr .column_search, select[name="mainRegisterTable_length"] {
+    margin: 2px;
+    border: 1px solid #999;
+    border-radius: 5px;
+    outline: none;
+    height: 30px;
+}
+
+table#mainRegisterTable tr td, table#mainRegisterTable tr th {
+    padding: 10px 20px;
+    text-align: center;
+    border: 1px solid #fff;
+    font-size: 14px;
+}
+
+table#mainRegisterTable tr td a, table#mainRegisterTable tr td a:active, table#mainRegisterTable tr td a:visited {
+    color: #333;
+    text-decoration: none;
+}
+
+table#mainRegisterTable thead tr td {
+    padding: 5px;
+    font-family: RubikMedium;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+#mainRegisterTable_wrapper .d-footer {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 8px 20px;
+}
+
+#mainRegisterTable_wrapper .d-footer ul.pagination {
+    margin: 0;
+    list-style: none;
+}
+
+#mainRegisterTable_wrapper .d-footer ul.pagination li {
+    float: left;
+    height: 30px;
+    margin: 0 10px 0 0;
+    padding: 0;
+    border: 1px solid #cedfe9;
+    background: #e6eced;
+    text-align: center;
+    vertical-align: middle;
+    box-sizing: border-box;
+    line-height: 28px;
+    cursor: pointer;
+}
+
+#mainRegisterTable_wrapper .d-footer ul.pagination li.active {
+    border-style: groove;
+    border-width: 2px;
+    background: #fff;
+    cursor: default;
+}
+
+#mainRegisterTable_wrapper .d-footer ul.pagination li.active a {
+    color: #000;
+    cursor: default;
+}
+
+#mainRegisterTable_wrapper .d-footer ul.pagination li a {
+    text-decoration: none;
+    color: #333;
+    padding: 10px;
+    border-bottom: none;
+}
+
+#mainRegisterTable_wrapper .d-footer ul.pagination li::after {
+    content: none;
+}
+
+#mainRegisterTable_wrapper .d-footer ul.pagination li.disabled {
+    cursor: default;
+}
+
+#mainRegisterTable_wrapper .d-footer ul.pagination li.disabled a {
+    cursor: default;
+    color: #999;
+}
+
+#mainRegisterTable_wrapper .d-footer .items-info {
+    padding-top: 4px;
+}
+
+/* Detail info table */
+body[class*="parent-pageid-"] h1 {
+    font-size: 30px;
+    line-height: 1.4em;
+}
+
+table.member_detail_info {
+    margin: 40px 0 20px;
+}
+
+table.member_detail_info tr:nth-child(odd) {
+    background-color: #e2eaed;
+}
+
+table.member_detail_info tr td {
+    padding: 10px;
+    text-align: center;
+    font-size: 12pt;
+    border: 2px solid #fff;
+}
+
+table.member_detail_info tr td[colspan] {
+    font-weight: bold;
+    background-color: #83e2c2;
+}
