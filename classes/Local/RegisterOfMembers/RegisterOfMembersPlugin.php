@@ -2,6 +2,10 @@
 
 namespace Local\RegisterOfMembers;
 
+use DateTime;
+use DateTimeZone;
+use Exception;
+
 /**
  * Base plugin class
  */
@@ -20,9 +24,58 @@ class RegisterOfMembersPlugin
 
         add_shortcode('registerOfMembersMarkupTag', array($this, 'showRegisterOfMembersPluginMainFileMarkup'));
         add_shortcode('registerOfMembersDetailEmptyTagForStyles', function () {
-            $this->enqueueStylesheets();
+            $this->enqueueStylesheetsAndScripts();
+            wp_enqueue_style('registerOfMembersStylePrint', REGISTRY_OF_MEMBERS_PLG_URL . 'css/print.css', [], false, 'print');
+            wp_enqueue_script('registerOfMembersScript', REGISTRY_OF_MEMBERS_PLG_URL . 'js/detail.js');
             return '';
         });
+
+        $this->handleCronPluginTask();
+    }
+
+    /**
+     * Method enqueue plugin styles
+     */
+    public function enqueueStylesheetsAndScripts()
+    {
+        $this->addJSConstants();
+        wp_enqueue_script('jquery');
+        wp_enqueue_style('registerOfMembersStyle', REGISTRY_OF_MEMBERS_PLG_URL . 'css/style.css');
+    }
+
+    /**
+     * Method echos some constants as js variables
+     */
+    private function addJSConstants()
+    {
+        echo '<script>
+            let defaultTableItems = "' . get_option('itemsPerPage') . '",
+                langFilePath = "' . REGISTRY_OF_MEMBERS_PLG_URL . 'js/ru.json";
+        </script>';
+    }
+
+    /**
+     * Method appends hook for register update by WP cron
+     */
+    private function handleCronPluginTask()
+    {
+        add_action('wp', [$this, 'addCronEvent']);
+        add_action('register_of_members_cron_event', [$this, 'processRegisterOfMembersFiles']);
+    }
+
+    /**
+     * Method appends cron event for register update
+     *
+     * @throws Exception
+     */
+    function addCronEvent()
+    {
+        $oDate = new DateTime(get_option('registerTimeUpdate'), new \DateTimeZone('Europe/Moscow'));
+        // WP cron in UTC only
+        $oDate->setTimezone(new \DateTimeZone('UTC'));
+        if (!wp_next_scheduled('register_of_members_cron_event')) {
+            wp_schedule_event($oDate->format('U'), 'daily', 'register_of_members_cron_event');
+        }
     }
 
     /**
@@ -30,29 +83,16 @@ class RegisterOfMembersPlugin
      */
     public function showRegisterOfMembersPluginMainFileMarkup(): void
     {
-        wp_enqueue_script('jquery');
+        $this->enqueueStylesheetsAndScripts();
         wp_enqueue_script('dataTablesScript', REGISTRY_OF_MEMBERS_PLG_URL . 'js/datatables.min.js');
-        wp_enqueue_script('registerOfMembersScript', REGISTRY_OF_MEMBERS_PLG_URL . 'js/script.js');
-        $this->enqueueStylesheets();
+        wp_enqueue_script('registerOfMembersScript', REGISTRY_OF_MEMBERS_PLG_URL . 'js/datatable.js');
 
-        $this->addJSConstants();
-        include_once REGISTRY_OF_MEMBERS_PLG_PATH . self::REGISTER_MARKUP_PATH;
-    }
-
-    /**
-     * Method enqueue plugin styles
-     */
-    public function enqueueStylesheets()
-    {
-        wp_enqueue_style('registerOfMembersStyle', REGISTRY_OF_MEMBERS_PLG_URL . 'css/style.css');
-    }
-
-    private function addJSConstants()
-    {
-        echo '<script>
-            let defaultTableItems = "' . get_option('itemsPerPage') . '",
-                langFilePath = "' . REGISTRY_OF_MEMBERS_PLG_URL . 'js/ru.json";
-        </script>';
+        $registerOfMembersMainMarkupFilePath = REGISTRY_OF_MEMBERS_PLG_PATH . self::REGISTER_MARKUP_PATH;
+        if (file_exists($registerOfMembersMainMarkupFilePath)) {
+            include_once $registerOfMembersMainMarkupFilePath;
+        } else {
+            echo '<p>Возникла проблема при отображении реестра.</p>';
+        }
     }
 
     /**

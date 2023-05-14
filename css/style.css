@@ -161,6 +161,19 @@ body[class*="parent-pageid-"] h1 {
     line-height: 1.4em;
 }
 
+div.printAndPdfLinks div {
+    margin-top: 6px;
+}
+
+div.printAndPdfLinks div span {
+    cursor: pointer;
+}
+
+div.printAndPdfLinks div span img {
+    padding-right: 6px;
+    vertical-align: top;
+}
+
 table.member_detail_info {
     margin: 40px 0 20px;
 }

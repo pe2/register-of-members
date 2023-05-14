@@ -49,6 +49,23 @@ class RegisterOfMembersSettings extends RegisterOfMembersPlugin
         register_setting('register-of-members', 'registerDetailFilePath');
         register_setting('register-of-members', 'registerBasePage');
         register_setting('register-of-members', 'registerDefaultUser');
+        register_setting('register-of-members', 'registerTimeUpdate', [
+                'sanitize_callback' => [$this, 'removeCronHook']
+        ]);
+    }
+
+    /**
+     * Method removes cron hook thus time can change
+     *
+     * @param $value
+     *
+     * @return mixed
+     */
+    public function removeCronHook($value)
+    {
+        wp_clear_scheduled_hook('register_of_members_cron_event');
+
+        return $value;
     }
 
     /**
@@ -98,6 +115,12 @@ class RegisterOfMembersSettings extends RegisterOfMembersPlugin
                                 пользователя по умолчанию</label></th>
                         <td><input type="text" name="registerDefaultUser" id="registerDefaultUser"
                                    value="<?= get_option('registerDefaultUser'); ?>"/></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="registerTimeUpdate"
+                                               title="Время, в которое будут обновляться файлы реестра. Если часы или минуты меньше 9, необходим ведущий 0. Например - 14:09">Время обновления реестра</label></th>
+                        <td><input type="text" name="registerTimeUpdate" id="registerTimeUpdate"
+                                   value="<?= get_option('registerTimeUpdate'); ?>"/></td>
                     </tr>
                 </table>
                 <p class="submit">

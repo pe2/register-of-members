@@ -48,16 +48,6 @@ class DetailFile extends RegisterOfMembersHandler
     }
 
     /**
-     * Method returns array of links to companies detail pages
-     *
-     * @return array
-     */
-    public function getDetailPagesLinksArray(): array
-    {
-        return $this->arCompaniesDetailPagesLinks;
-    }
-
-    /**
      * Method returns assoc. array with companies data grouped by id
      *
      * @param array $detailRegistryArrayData
@@ -89,7 +79,8 @@ class DetailFile extends RegisterOfMembersHandler
         $arCompaniesDetailHtmlInfo = [];
         $numberOfSuccessfullyGeneratedTables = 0;
         foreach ($arCompaniesDetailInfo as $id => $arCompanyFields) {
-            $html = '<table class="member_detail_info">';
+            $html = $this->addPrintAndPDFLinks();
+            $html .= '<table class="member_detail_info">';
             $numberOfFields = 0;
             $name = '';
             foreach ($arCompanyFields as $arCompanyField) {
@@ -116,6 +107,20 @@ class DetailFile extends RegisterOfMembersHandler
         }
 
         return $arCompaniesDetailHtmlInfo;
+    }
+
+    /**
+     * Method returns markup with print and pdf version of detailed member info
+     *
+     * @return string
+     */
+    private function addPrintAndPDFLinks(): string
+    {
+        return '<div class="printAndPdfLinks">' .
+            '<div><span class="print-version"><img src="' . REGISTRY_OF_MEMBERS_PLG_URL .
+            'img/printer-icon.png' . '" alt="print-version"/>Версия для печати</span></div>' .
+            '<div><span class="pdf-version"><img src="' . REGISTRY_OF_MEMBERS_PLG_URL .
+            'img/pdf-icon.png' . '" alt="print-version"/>PDF версия карточки</span></div></div>';
     }
 
     /**
@@ -166,5 +171,15 @@ class DetailFile extends RegisterOfMembersHandler
 
         $this->log('Успешно добавлена информация о ' . $successInsert .
             ' организациях, успешно обновлена информация о ' . $successUpdate . ' организациях');
+    }
+
+    /**
+     * Method returns array of links to companies detail pages
+     *
+     * @return array
+     */
+    public function getDetailPagesLinksArray(): array
+    {
+        return $this->arCompaniesDetailPagesLinks;
     }
 }
