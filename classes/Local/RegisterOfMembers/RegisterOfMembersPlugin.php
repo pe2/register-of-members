@@ -50,6 +50,7 @@ class RegisterOfMembersPlugin
     {
         echo '<script>
             let defaultTableItems = "' . get_option('itemsPerPage') . '",
+                pluginPath = "' . REGISTRY_OF_MEMBERS_PLG_URL . '",
                 langFilePath = "' . REGISTRY_OF_MEMBERS_PLG_URL . 'js/ru.json";
         </script>';
     }
@@ -70,9 +71,9 @@ class RegisterOfMembersPlugin
      */
     function addCronEvent()
     {
-        $oDate = new DateTime(get_option('registerTimeUpdate'), new \DateTimeZone('Europe/Moscow'));
+        $oDate = new DateTime(get_option('registerTimeUpdate'), new DateTimeZone('Europe/Moscow'));
         // WP cron in UTC only
-        $oDate->setTimezone(new \DateTimeZone('UTC'));
+        $oDate->setTimezone(new DateTimeZone('UTC'));
         if (!wp_next_scheduled('register_of_members_cron_event')) {
             wp_schedule_event($oDate->format('U'), 'daily', 'register_of_members_cron_event');
         }
