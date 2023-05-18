@@ -4,9 +4,19 @@ jQuery(document).ready(function () {
     });
 
     jQuery('span.pdf-version').click(function () {
-        let name = jQuery('table.member_detail_info tr:nth-child(1) td:nth-child(2)').html() + '-' +
-            jQuery('table.member_detail_info tr:nth-child(5) td:nth-child(2)').html();
-        name = name.replace(/\s+/g, '_');
+        let number = jQuery('table.member_detail_info td:contains("Регистрационный номер")').next().html(),
+			shortName = jQuery('table.member_detail_info td:contains("Сокращенное наименование")').next().html(),
+			name = '';
+		
+		if ('undefined' !== typeof number && 'undefined' !== typeof shortName) {
+			name = number + '-' + shortName;
+		} else {
+			name = jQuery('h1').html();
+			if ('undefined' === typeof name) {
+				name = 'document';
+			}
+		}
+		name = name.replace(/\s+/g, '_');
 
         /**
          * @see https://stackoverflow.com/questions/16086162/handle-file-download-from-ajax-post/23797348#23797348

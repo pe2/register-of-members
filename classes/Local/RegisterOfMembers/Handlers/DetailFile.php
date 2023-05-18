@@ -3,6 +3,7 @@
 namespace Local\RegisterOfMembers\Handlers;
 
 use Local\RegisterOfMembers\RegisterOfMembersHandler;
+use WP_Query;
 
 class DetailFile extends RegisterOfMembersHandler
 {
@@ -12,8 +13,11 @@ class DetailFile extends RegisterOfMembersHandler
     /** @var int Min number of fields to check success table generation */
     private const MIN_NUMBER_OF_FIELDS = 10;
 
-    /** @var string Field name to generate page slug */
+    /** @var string Field name used for page slug generation */
     private const FIELD_NAME_FOR_SLUG = 'Полное наименование';
+
+    /** @var string[] Cell names with are not suitable for colspan */
+    private const NOT_COLSPAN_CELLS = ['Сайт', 'Место нахождения', 'Уровень ответственности', 'Размер взноса (руб.)'];
 
     /** @var array Array of links to companies detail pages */
     private $arCompaniesDetailPagesLinks = [];
@@ -59,7 +63,11 @@ class DetailFile extends RegisterOfMembersHandler
         $arCompaniesDetailInfo = [];
         foreach ($detailRegistryArrayData['row'] as $fieldId => $arRecord) {
             if (is_array($arRecord['colvalue']) && !count($arRecord['colvalue'])) {
-                $arRecord['colvalue'] = 'COLSPAN_2';
+                if (in_array(trim($arRecord['colname']), self::NOT_COLSPAN_CELLS)) {
+                    $arRecord['colvalue'] = ' ';
+                } else {
+                    $arRecord['colvalue'] = 'COLSPAN_2';
+                }
             }
             $arCompaniesDetailInfo[$arRecord['agent_id']][$fieldId] = [$arRecord['colname'] => $arRecord['colvalue']];
         }
@@ -133,12 +141,12 @@ class DetailFile extends RegisterOfMembersHandler
         $successInsert = $successUpdate = 0;
         $counter = 0;
         foreach ($arCompaniesDetailHtmlInfo as $companyId => $arCompanyDetailHtmlInfo) {
-            if (3 < ++$counter) {
+            if (2 < ++$counter) {
                 break;
             }
             $arCompanyTableData = $arCompanyDetailHtmlInfo['table'];
             $name = $arCompanyDetailHtmlInfo['name'];
-            $arPage = get_page_by_title(html_entity_decode($name), 'ARRAY_A');
+            $arPage = $this->getPageInfo($name);
 
             if (isset($arPage['ID']) && 0 < $arPage['ID']) {
                 $updateResult = wp_update_post([
@@ -171,6 +179,37 @@ class DetailFile extends RegisterOfMembersHandler
 
         $this->log('Успешно добавлена информация о ' . $successInsert .
             ' организациях, успешно обновлена информация о ' . $successUpdate . ' организациях');
+    }
+
+    /**
+     * Method returns page ids
+     *
+     * @param string $name Page name
+     *
+     * @return array ['ID', 'guid'] or empty array if page doesn't exist
+     */
+    private function getPageInfo(string $name): array
+    {
+        $query = new WP_Query(
+            array(
+                'post_type' => 'page',
+                'title' => html_entity_decode($name),
+                'post_status' => 'all',
+                'posts_per_page' => 1,
+                'no_found_rows' => true,
+                'ignore_sticky_posts' => true,
+                'update_post_term_cache' => false,
+                'update_post_meta_cache' => false,
+                'orderby' => 'post_date ID',
+                'order' => 'ASC',
+            )
+        );
+
+        if (!empty($query->post)) {
+            return ['ID' => $query->post->ID, 'guid' => $query->post->guid];
+        } else {
+            return [];
+        }
     }
 
     /**

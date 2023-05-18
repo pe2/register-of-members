@@ -3,7 +3,7 @@
  * Plugin Name: Реестр членов организации
  * Plugin URI: http://github.com/pe2/register-of-members
  * Description: Вывод информации о членах СРО из выгрузки Lotus
- * Version: 1.0.0
+ * Version: 1.0.1
  * Date released: 01/05/2023
  * Author: Alex M. Telezhkin
  * Author URI: http://github.com/pe2
