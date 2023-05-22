@@ -16,8 +16,15 @@ class DetailFile extends RegisterOfMembersHandler
     /** @var string Field name used for page slug generation */
     private const FIELD_NAME_FOR_SLUG = 'Полное наименование';
 
-    /** @var string[] Cell names with are not suitable for colspan */
-    private const NOT_COLSPAN_CELLS = ['Сайт', 'Место нахождения', 'Уровень ответственности', 'Размер взноса (руб.)'];
+    /** @var string[] Cell names suitable for colspan */
+    private const COLSPAN_CELLS = ['Сведения, позволяющие идентифицировать члена СРО', 'Адрес', 'Контактная информация',
+        'Руководитель', 'Сведения о соответствии члена СРО условиям членства в СРО', 'Сведения о внесении взноса в Компенсационный фонд возмещения вреда СРО',
+        'Сведения о внесении взноса в Компенсационный фонд обеспечения договорных обязательств СРО', 'Сведения о наличии страховки',
+        'Сведения о наличии у члена саморегулируемой организации права выполнять строительство, реконструкцию, капитальный ремонт объектов капитального строительства по договору строительного подряда, заключаемого с использованием конкурентных способов заключения договоров',
+        'по договору строительного подряда', 'по договору строительного подряда, заключаемого с использованием конкурентных способов заключения договоров',
+        'Сведения о внесении изменении в свидетельство о праве', 'Сведения о приостановлении, о возобновлении, об отказе в возобновлении права осуществлять строительство, реконструкцию, капитальный ремонт объектов капитального строительства',
+        'Сведения о прекращении членства в Ассоциации', 'Номер решения', 'Ранее выданные свидетельства о допуске/праве',
+        'Сведения о проведенных проверках'];
 
     /** @var array Array of links to companies detail pages */
     private $arCompaniesDetailPagesLinks = [];
@@ -63,10 +70,10 @@ class DetailFile extends RegisterOfMembersHandler
         $arCompaniesDetailInfo = [];
         foreach ($detailRegistryArrayData['row'] as $fieldId => $arRecord) {
             if (is_array($arRecord['colvalue']) && !count($arRecord['colvalue'])) {
-                if (in_array(trim($arRecord['colname']), self::NOT_COLSPAN_CELLS)) {
-                    $arRecord['colvalue'] = ' ';
-                } else {
+                if (in_array(trim($arRecord['colname']), self::COLSPAN_CELLS)) {
                     $arRecord['colvalue'] = 'COLSPAN_2';
+                } else {
+                    $arRecord['colvalue'] = '&nbsp;';
                 }
             }
             $arCompaniesDetailInfo[$arRecord['agent_id']][$fieldId] = [$arRecord['colname'] => $arRecord['colvalue']];
@@ -139,11 +146,7 @@ class DetailFile extends RegisterOfMembersHandler
     private function writeCompaniesDataTablesAsPages(array $arCompaniesDetailHtmlInfo): void
     {
         $successInsert = $successUpdate = 0;
-        $counter = 0;
         foreach ($arCompaniesDetailHtmlInfo as $companyId => $arCompanyDetailHtmlInfo) {
-            if (2 < ++$counter) {
-                break;
-            }
             $arCompanyTableData = $arCompanyDetailHtmlInfo['table'];
             $name = $arCompanyDetailHtmlInfo['name'];
             $arPage = $this->getPageInfo($name);
